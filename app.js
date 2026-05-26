@@ -457,7 +457,7 @@ function finishWorkout() {
   state.points += earned;
 
   const record = {
-    id: crypto.randomUUID ? crypto.randomUUID() : String(Date.now()),
+    id: (window.crypto && crypto.randomUUID) ? crypto.randomUUID() : String(Date.now()),
     date: new Date().toLocaleString("ru-RU"),
     dayId: day.id,
     title: day.title,
@@ -637,8 +637,13 @@ function exportJSON() {
 }
 
 function bindEvents() {
-  $("profileForm").addEventListener("submit", (e) => {
-    e.preventDefault();
+  const generate = () => {
+    const form = $("profileForm");
+    if (!form.checkValidity()) {
+      form.reportValidity();
+      return;
+    }
+
     const profile = getProfileFromForm();
 
     if (profile.health && healthRisk(profile)) {
@@ -663,7 +668,14 @@ function bindEvents() {
     save();
     renderAll();
     toast("План на 4 недели создан.");
+  };
+
+  $("profileForm").addEventListener("submit", (e) => {
+    e.preventDefault();
+    generate();
   });
+
+  $("generatePlanBtn").addEventListener("click", generate);
 
   $("completeExerciseBtn").addEventListener("click", () => completeCurrentExercise("done"));
   $("skipExerciseBtn").addEventListener("click", () => completeCurrentExercise("skipped"));
