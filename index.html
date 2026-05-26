@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FitPlan MVP — персональный фитнес-планер</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <header class="hero">
+      <div>
+        <div class="eyebrow">MVP для GitHub Pages</div>
+        <h1>FitPlan</h1>
+        <p>Анкета → месячный план тренировок → контроль прогресса → мотивация.</p>
+      </div>
+      <div class="hero-card">
+        <span id="levelBadge">Новичок</span>
+        <strong id="pointsValue">0</strong>
+        <small>очков прогресса</small>
+      </div>
+    </header>
+
+    <nav class="tabs" aria-label="Навигация">
+      <button class="tab active" data-tab="profile">1. Анкета</button>
+      <button class="tab" data-tab="plan">2. План</button>
+      <button class="tab" data-tab="measurements">3. Замеры</button>
+      <button class="tab" data-tab="progress">4. Прогресс</button>
+    </nav>
+
+    <main>
+      <section id="profile" class="panel active-panel">
+        <div class="panel-head">
+          <h2>Данные для генерации плана</h2>
+          <p>Чем честнее заполнены данные, тем адекватнее будут веса, объём и темп прогресса.</p>
+        </div>
+
+        <form id="profileForm" class="grid-form">
+          <label>Имя
+            <input name="name" placeholder="Например, Влад" />
+          </label>
+          <label>Возраст
+            <input name="age" type="number" min="14" max="90" placeholder="28" required />
+          </label>
+          <label>Рост, см
+            <input name="height" type="number" min="120" max="230" placeholder="180" required />
+          </label>
+          <label>Вес, кг
+            <input name="weight" type="number" min="35" max="220" step="0.1" placeholder="85" required />
+          </label>
+          <label>Цель
+            <select name="goal">
+              <option value="fatloss">Сжечь жир / подтянуть форму</option>
+              <option value="muscle">Набрать мышечную массу</option>
+              <option value="strength">Стать сильнее</option>
+              <option value="general">Общая форма и выносливость</option>
+            </select>
+          </label>
+          <label>Опыт
+            <select name="experience">
+              <option value="beginner">Новичок / давно не тренировался</option>
+              <option value="middle">Средний уровень</option>
+              <option value="advanced">Хороший уровень</option>
+            </select>
+          </label>
+          <label>Дней тренировок в неделю
+            <select name="days">
+              <option value="3">3 дня</option>
+              <option value="4" selected>4 дня</option>
+              <option value="5">5 дней</option>
+            </select>
+          </label>
+          <label>Подтягивания максимум
+            <input name="pullups" type="number" min="0" max="50" placeholder="5" />
+          </label>
+          <label>Жим лёжа рабочий вес, кг
+            <input name="bench" type="number" min="0" max="160" placeholder="40" />
+          </label>
+          <label>Присед рабочий вес, кг
+            <input name="squat" type="number" min="0" max="180" placeholder="40" />
+          </label>
+          <label>Самочувствие сейчас
+            <select name="energy">
+              <option value="low">Слабое</option>
+              <option value="normal" selected>Нормальное</option>
+              <option value="high">Отличное</option>
+            </select>
+          </label>
+          <label>Ограничения по здоровью
+            <textarea name="health" placeholder="Например: колено, спина, давление, сердце, травмы. Если нет — напиши нет."></textarea>
+          </label>
+
+          <div class="form-actions">
+            <button type="submit" class="primary">Сгенерировать план на месяц</button>
+            <button type="button" id="resetBtn" class="ghost">Сбросить данные</button>
+          </div>
+        </form>
+
+        <div class="warning">
+          <b>Важно:</b> это MVP-планер, а не врач. При боли, проблемах с сердцем, давлением, позвоночником или суставами — нагрузку нужно согласовать со специалистом.
+        </div>
+      </section>
+
+      <section id="plan" class="panel">
+        <div class="panel-head row">
+          <div>
+            <h2>Месячный план</h2>
+            <p id="planIntro">Сначала заполни анкету и сгенерируй план.</p>
+          </div>
+          <button id="printBtn" class="ghost">Печать / PDF</button>
+        </div>
+        <div id="planContainer" class="plan-container empty-state">План пока не создан.</div>
+      </section>
+
+      <section id="measurements" class="panel">
+        <div class="panel-head">
+          <h2>Контрольные точки и замеры</h2>
+          <p>Заполняй 1 раз в неделю. Главное — видеть динамику, а не идеальные цифры каждый день.</p>
+        </div>
+        <div id="measurementsContainer"></div>
+      </section>
+
+      <section id="progress" class="panel">
+        <div class="panel-head">
+          <h2>Мотивация и прогресс</h2>
+          <p>Очки начисляются за выполненные тренировки, растяжку, кардио и заполненные замеры.</p>
+        </div>
+        <div class="stats-grid">
+          <div class="stat"><span id="doneCount">0</span><small>тренировок выполнено</small></div>
+          <div class="stat"><span id="streakCount">0</span><small>серия активности</small></div>
+          <div class="stat"><span id="monthPercent">0%</span><small>месяц закрыт</small></div>
+        </div>
+        <div class="progress-line"><div id="progressBar"></div></div>
+        <div id="motivationBox" class="motivation-box">Заполни анкету и начни первый месяц.</div>
+      </section>
+    </main>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
